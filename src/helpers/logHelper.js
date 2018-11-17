@@ -6,12 +6,26 @@ Logging utilities
 const moment = require('moment');
 require('moment/locale/es');
 
+const getTime = (received) => {
+  const timeStamp = received ? received : (new Date()).getTime();
+  return moment(timeStamp).format('DD/MM/YYYY HH:mm:SS');
+}
+
 const logIncomingRequest = (requestInfo) => {
   const { received, remoteAddress, remotePort } = requestInfo;
-  const time = moment(received).format('DD/MM/YYYY HH:mm:SS');
-  console.log(`${time}: Incoming request from ${remoteAddress}:${remotePort}`);
+  console.log(`${getTime(received)}: Incoming request from ${remoteAddress}:${remotePort}`);
+}
+
+const logError = (errData) => {
+  console.log(`${getTime()}: Error detected: ${errData}`);
+}
+
+const logInfo = (data) => {
+  console.log(`${getTime()}: ${data}`);
 }
 
 module.exports = {
-  logIncomingRequest
+  logIncomingRequest,
+  logInfo,
+  logError
 };

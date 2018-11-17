@@ -1,3 +1,5 @@
 module.exports = {
-  ROOT: '/'
+  ROOT: '/',
+  REGISTER_DATA: '/register',
+  GET_DATA: '/get'
 };

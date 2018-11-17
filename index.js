@@ -2,23 +2,46 @@
 const Hapi = require('hapi'); //@npm MIT license
 
 // @Handlers
-const { testHandler } = require('./src/handlers');
+const { 
+  handleExample,
+  hangleGetData,
+  handleInsertData 
+} = require('./src/handlers');
+
+// @Model
+const DBClient = require('./src/model/dbClient');
+
+// @Routes
+const { GET_DATA, ROOT, REGISTER_DATA } = require('./src/constants/routes');
 
 // @Constants
-const { ROOT } = require('./src/constants/routes');
-const { SERVER_MAIN_HOST, SERVER_MAIN_PORT } = require('./src/constants/constants');
+const { 
+  SERVER_MAIN_HOST, 
+  SERVER_MAIN_PORT 
+} = require('./src/constants/constants');
+
+// @Messages
+const {
+  DB_SERVER_CONN_ERROR,
+  SERVER_STARTED
+} = require('./src/constants/messages');
 
 // @Helpers
-const { logIncomingRequest } = require('./src/helpers/logHelper');
+const { logError, logIncomingRequest, logInfo } = require('./src/helpers/logHelper');
 
 //SetUps and starts server
-async function serverInitialize() {
+async function serverInitialize(dbClient) {
 
   // Server ip and port configurationa
   const server = Hapi.server({
     host: SERVER_MAIN_HOST,
     port: SERVER_MAIN_PORT
   });
+
+  // Server methods register
+  server.method('insertData', dbClient.insertData, {});
+  server.method('getData', dbClient.getData, {});
+  server.method('closeConn', dbClient.close, {});
 
   // Handles connection abort
   server.events.on({ name: 'request' }, (request, event, tags) => {
@@ -42,18 +65,40 @@ async function serverInitialize() {
     method: 'GET',
     path: ROOT,
     options: { log: { collect: true } },
-    handler: (request, response) => {return routeRequest(request, response, testHandler)}
+    handler: (request, response) => {return routeRequest(request, response, handleExample)}
+  });
+
+  server.route({
+    method: 'POST',
+    path: REGISTER_DATA,
+    options: { log: { collect: true } },
+    handler: (request, response) => {return routeRequest(request, response, handleInsertData)}
+  });
+
+  server.route({
+    method: 'GET',
+    path: GET_DATA,
+    options: { log: { collect: true } },
+    handler: (request, response) => {return routeRequest(request, response, hangleGetData)}
   });
 
   //After server is set up, we make server start in order to listen the desired port
   try {
     await server.start();
-    console.log(`Server is now running at port ${server.info.port}`);
+    logInfo(`${SERVER_STARTED}${server.info.port}`);
   } catch(err) {
-    console.log(err);
+    logError(err);
     process.exit(1);
   }
 }
 
 // Initializes server
-serverInitialize();
+const databaseClient = new DBClient();
+databaseClient.connect((err) => {
+  if(err) {
+    logInfo(DB_SERVER_CONN_ERROR);
+    logError(err);
+    process.exit(1);
+  }
+  serverInitialize(databaseClient);
+});
