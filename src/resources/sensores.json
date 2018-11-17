@@ -1,0 +1,22 @@
+[
+  {
+    "id": "",
+    "timestamp": 111111,
+    "velocidad": "",
+    "torque": 2.3,
+    "RPM": "",
+    "LitrosTanque": "",
+    "kilometraje":"", 
+    "horometro": ""
+  },
+  {
+    "id": "",
+    "timestamp": 111111,
+    "velocidad": "",
+    "torque": 2.3,
+    "RPM": "",
+    "LitrosTanque": "",
+    "kilometraje":"", 
+    "horometro": ""
+  }
+]
