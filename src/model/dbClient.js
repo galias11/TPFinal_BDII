@@ -67,7 +67,8 @@ class DBClient {
     if(!this.ready) {
       return Promise.reject(CONNECTION_NOT_READY);
     }
-    return insert(this.client, dbName, collectionName, data);
+    const timedData = {...data, storeTime: (new Date()).getTime()};
+    return insert(this.client, dbName, collectionName, timedData);
   }
 }
 
