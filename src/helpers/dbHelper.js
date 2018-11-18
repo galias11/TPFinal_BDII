@@ -16,7 +16,7 @@ const connect = mongoServer => {
 const insert = (client, dataBaseName, collectionName, data) => {
   return new Promise((resolve, reject) => {
     const collection = client && client.db(dataBaseName).collection(collectionName);
-    return collection && collection.insertOne(data, (err, results) => {
+    collection && collection.insertOne(data, (err, results) => {
       if(err) {
         reject(err);
       } else {
@@ -29,7 +29,7 @@ const insert = (client, dataBaseName, collectionName, data) => {
 const getData = (client, dataBaseName, collectionName, query) => {
   return new Promise((resolve, reject) => {
     const collection = client && client.db(dataBaseName).collection(collectionName);
-    return collection && collection.find(query).toArray((err, results) => {
+    collection && collection.find(query).toArray((err, results) => {
       if(err) {
         reject(err);
       } else {
@@ -37,6 +37,25 @@ const getData = (client, dataBaseName, collectionName, query) => {
       }
     });
   });
+}
+
+const mapReduce = (client, dataBaseName, collectionName, { mapData, mapReduce, options, aggregationQuery}) => {
+  return new Promise((resolve, reject) => {
+    const collection = client && client.db(dataBaseName).collection(collectionName);
+    collection && collection.mapReduce(mapData, mapReduce, options, (err, results) => {
+      if(err) {
+        reject(err);
+      } else {
+        if(!aggregationQuery) {
+          resolve(results);
+        } else {
+          results.aggregate(aggregationQuery).toArray()
+            .then(result => {resolve(result)})
+            .catch(err => reject(err));
+        }
+      }
+    });
+  })
 }
 
 const closeConn = client => {
@@ -47,5 +66,6 @@ module.exports = {
   closeConn,
   connect,
   getData,
-  insert
+  insert,
+  mapReduce
 }

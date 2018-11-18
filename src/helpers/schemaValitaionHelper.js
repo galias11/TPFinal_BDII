@@ -30,7 +30,7 @@ const generalSchema = Joi.object().keys({
   horometro: Joi.alternatives([Joi.string(), Joi.number()]).required(),
 });
 
-const getDataType = (data, options) => {
+const getDataType = (data, options = {allowUnknown: true}) => {
   if(!data) {
     return;
   }

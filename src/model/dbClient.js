@@ -9,7 +9,8 @@ const {
   closeConn,
   connect,
   getData,
-  insert
+  insert,
+  mapReduce
 } = require('../helpers/dbHelper');
 
 class DBClient {
@@ -21,6 +22,7 @@ class DBClient {
     this.isReady = this.isReady.bind(this);
     this.getData = this.getData.bind(this);
     this.reConnect = this.reConnect.bind(this);
+    this.mapReduce = this.mapReduce.bind(this);
   }
 
   connect(onConnectCallback) {
@@ -69,6 +71,13 @@ class DBClient {
     }
     const timedData = {...data, storeTime: (new Date()).getTime()};
     return insert(this.client, dbName, collectionName, timedData);
+  }
+
+  mapReduce(dbName, collectionName, mapReduceParameters) {
+    if(!this.ready) {
+      return Promise.reject(CONNECTION_NOT_READY);
+    }
+    return mapReduce(this.client, dbName, collectionName, mapReduceParameters);
   }
 }
 

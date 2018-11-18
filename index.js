@@ -4,6 +4,7 @@ const Hapi = require('hapi'); //@npm MIT license
 // @Handlers
 const { 
   handleExample,
+  handleGetAverageConsumption,
   hangleGetData,
   handleInsertData 
 } = require('./src/handlers');
@@ -12,7 +13,7 @@ const {
 const DBClient = require('./src/model/dbClient');
 
 // @Routes
-const { GET_DATA, ROOT, REGISTER_DATA } = require('./src/constants/routes');
+const { GET_AVERAGE_CONSUMPTION, GET_DATA, ROOT, REGISTER_DATA } = require('./src/constants/routes');
 
 // @Constants
 const { 
@@ -42,6 +43,7 @@ async function serverInitialize(dbClient) {
   server.method('insertData', dbClient.insertData, {});
   server.method('getData', dbClient.getData, {});
   server.method('closeConn', dbClient.close, {});
+  server.method('mapReduce', dbClient.mapReduce, {});
 
   // Handles connection abort
   server.events.on({ name: 'request' }, (request, event, tags) => {
@@ -80,6 +82,13 @@ async function serverInitialize(dbClient) {
     path: GET_DATA,
     options: { log: { collect: true } },
     handler: (request, response) => {return routeRequest(request, response, hangleGetData)}
+  });
+
+  server.route({
+    method: 'GET',
+    path: GET_AVERAGE_CONSUMPTION,
+    options: { log: { collect: true } },
+    handler: (request, response) => {return routeRequest(request, response, handleGetAverageConsumption)}
   });
 
   //After server is set up, we make server start in order to listen the desired port
