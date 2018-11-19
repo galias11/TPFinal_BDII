@@ -6,14 +6,20 @@ const {
   handleExample,
   handleGetAverageConsumption,
   hangleGetData,
-  handleInsertData 
+  handleInsertData,
+  handleInsertVehicle
 } = require('./src/handlers');
 
 // @Model
 const DBClient = require('./src/model/dbClient');
 
 // @Routes
-const { GET_AVERAGE_CONSUMPTION, GET_DATA, ROOT, REGISTER_DATA } = require('./src/constants/routes');
+const { 
+  GET_AVERAGE_CONSUMPTION, 
+  GET_DATA, ROOT, 
+  REGISTER_DATA,
+  REGISTER_VEHICLE 
+} = require('./src/constants/routes');
 
 // @Constants
 const { 
@@ -75,6 +81,13 @@ async function serverInitialize(dbClient) {
     path: REGISTER_DATA,
     options: { log: { collect: true } },
     handler: (request, response) => {return routeRequest(request, response, handleInsertData)}
+  });
+
+  server.route({
+    method: 'POST',
+    path: REGISTER_VEHICLE,
+    options: { log: { collect: true } },
+    handler: (request, response) => {return routeRequest(request, response, handleInsertVehicle)}
   });
 
   server.route({

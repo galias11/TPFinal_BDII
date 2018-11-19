@@ -1,6 +1,10 @@
 // @Vendors
 const MongoClient = require('mongodb');
 
+const createCollection = (client, dataBaseName, collectionName) => (
+  client && client.db(dataBaseName).collection(collectionName)
+)
+
 const connect = mongoServer => {
   return new Promise((resolve, reject) => {
     MongoClient.connect(mongoServer, (err, client) => { 
@@ -15,7 +19,7 @@ const connect = mongoServer => {
 
 const insert = (client, dataBaseName, collectionName, data) => {
   return new Promise((resolve, reject) => {
-    const collection = client && client.db(dataBaseName).collection(collectionName);
+    const collection = createCollection(client, dataBaseName, collectionName);
     collection && collection.insertOne(data, (err, results) => {
       if(err) {
         reject(err);
@@ -28,7 +32,7 @@ const insert = (client, dataBaseName, collectionName, data) => {
 
 const getData = (client, dataBaseName, collectionName, query) => {
   return new Promise((resolve, reject) => {
-    const collection = client && client.db(dataBaseName).collection(collectionName);
+    const collection = createCollection(client, dataBaseName, collectionName);
     collection && collection.find(query).toArray((err, results) => {
       if(err) {
         reject(err);
@@ -39,17 +43,17 @@ const getData = (client, dataBaseName, collectionName, query) => {
   });
 }
 
-const mapReduce = (client, dataBaseName, collectionName, { mapData, mapReduce, options, aggregationQuery}) => {
+const mapReduce = (client, dataBaseName, collectionName, { mapData, mapReduce, options, aggregationPipeline}) => {
   return new Promise((resolve, reject) => {
-    const collection = client && client.db(dataBaseName).collection(collectionName);
+    const collection = createCollection(client, dataBaseName, collectionName);
     collection && collection.mapReduce(mapData, mapReduce, options, (err, results) => {
       if(err) {
         reject(err);
       } else {
-        if(!aggregationQuery) {
+        if(!aggregationPipeline) {
           resolve(results);
         } else {
-          results.aggregate(aggregationQuery).toArray()
+          results.aggregate(aggregationPipeline).toArray()
             .then(result => {resolve(result)})
             .catch(err => reject(err));
         }

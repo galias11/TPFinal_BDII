@@ -30,6 +30,14 @@ const generalSchema = Joi.object().keys({
   horometro: Joi.alternatives([Joi.string(), Joi.number()]).required(),
 });
 
+const vehicleSchema = Joi.object().keys({
+  id: Joi.string().required(),
+  tipo: Joi.string().required(),
+  modelo: Joi.number().required(),
+  descripcion: Joi.string().required(),
+  lastService: Joi.number().required()
+})
+
 const getDataType = (data, options = {allowUnknown: true}) => {
   if(!data) {
     return;
@@ -46,6 +54,9 @@ const getDataType = (data, options = {allowUnknown: true}) => {
   return TYPE_UNKNOWN;
 }
 
+const validateVehicleSchema = (data, options = {}) => (Joi.validate(data, vehicleSchema, options).error === null);
+
 module.exports = {
-  getDataType
+  getDataType,
+  validateVehicleSchema
 };

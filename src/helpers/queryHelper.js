@@ -5,7 +5,7 @@ Average consumption map reduce
 // Map reduce utility for average consumption
 function consumptionMapData() {
   /* eslint-disable  no-undef */
-  emit({id: this.id, tipo: this.tipo || 'not_defined'}, { litrosTanque: this.litrosTanque, kilometraje: this.kilometraje, single: true });
+  emit(this.id, { litrosTanque: this.litrosTanque, kilometraje: this.kilometraje, single: true });
   /* eslint-enable  no-undef */
 }
 
@@ -33,17 +33,26 @@ function consumptionFinalize(key, reducedVal) {
   return { litresConsumed, kilometers };
 }
 
-const consumptionAggregate = [
-  { '$group': {
-    '_id': '$_id.tipo',
-    'litresConsumed': { '$sum': '$value.litresConsumed' },
-    'kilometers': { '$sum': '$value.kilometers' }
+const consumptionAggregatePipeline = [
+  { $lookup: {
+    from: 'vehicles',
+    localField: '_id',
+    foreignField: 'id',
+    as: 'vehicleData'
   }},
-  { '$project': {
-    'vehicleType': '$_id',
-    'litresConsumed': '$litresConsumed',
-    'kilometers': '$kilometers',
-    'averageConsumption': {'$cond': [ { '$eq': ['$kilometers', 0] }, 0.0, { '$divide': [ '$litresConsumed', '$kilometers' ] }]}
+  { $addFields: {
+    vehicle: { $arrayElemAt: [ '$vehicleData', 0 ] }
+  }},
+  { $group: {
+    _id: '$vehicle.tipo',
+    litresConsumed: { $sum: '$value.litresConsumed' },
+    kilometers: { $sum: '$value.kilometers' }
+  }},
+  { $project: {
+    vehicleType: '$_id.tipo',
+    litresConsumed: '$litresConsumed',
+    kilometers: '$kilometers',
+    averageConsumption: {$cond: [ { $eq: ['$kilometers', 0] }, 0.0, { $divide: [ '$litresConsumed', '$kilometers' ] }]}
   }}
 ];
 
@@ -52,6 +61,13 @@ const consumptionOptions = {
   finalize: consumptionFinalize
 }
 
+const consumptionQuery = { 
+  mapData: consumptionMapData, 
+  mapReduce: consumptionMapReduce, 
+  options: consumptionOptions, 
+  aggregationPipeline: consumptionAggregatePipeline 
+};
+
 module.exports = {
-  consumption: { mapData: consumptionMapData, mapReduce: consumptionMapReduce, options: consumptionOptions, aggregationQuery: consumptionAggregate }
+  consumption: consumptionQuery
 }

@@ -6,5 +6,6 @@ module.exports = {
   TYPE_GENERAL: 'type_general',
   TYPE_POSITION: 'type_position',
   TYPE_TIRES: 'type_tyres',
-  TYPE_UNKNOWN: 'type_unknown'
+  TYPE_UNKNOWN: 'type_unknown',
+  VEHICLES: 'vehicles'
 }
