@@ -7,5 +7,7 @@ module.exports = {
   TYPE_POSITION: 'type_position',
   TYPE_TIRES: 'type_tyres',
   TYPE_UNKNOWN: 'type_unknown',
-  VEHICLES: 'vehicles'
+  VEHICLES: 'vehicles',
+  VEHICLE_SERVICE_INTERVAL: 10000,
+  WARNING_MIN: 500
 }

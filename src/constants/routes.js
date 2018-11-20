@@ -3,5 +3,6 @@ module.exports = {
   REGISTER_DATA: '/register',
   REGISTER_VEHICLE: '/register_vehicle',
   GET_AVERAGE_CONSUMPTION: '/average_cons',
-  GET_DATA: '/get'
+  GET_DATA: '/get',
+  GET_SERVICE_PROXIMITY: '/service_proximity'
 };

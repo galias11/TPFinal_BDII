@@ -4,7 +4,7 @@ const { DB_NAME, TYPE_GENERAL, VEHICLES } = require('../constants/constants');
 
 // @Helpers
 const { getDataType, validateVehicleSchema } = require('../helpers/schemaValitaionHelper');
-const { consumption } = require('../helpers/queryHelper');
+const { consumption, serviceCheckAggregationQuery } = require('../helpers/queryHelper');
 
 // Root generic handler
 const handleExample = (request, h) => {
@@ -50,18 +50,18 @@ async function hangleGetData(request, h) {
   return response;
 }
 
-// Get average gas consumption
+// 2- Get average gas consumption
 async function handleGetAverageConsumption(request, h) {
   const response = await request.server.methods.mapReduce(DB_NAME, TYPE_GENERAL, consumption)
     .then(results => {
-      const totals = {litresConsumed: 0, kilometers: 0};
+      const totals = {litresConsumed: 0, kilometersTravelled: 0};
       results.forEach(result => {
         totals.litresConsumed += result.litresConsumed;
-        totals.kilometers += result.kilometers;
+        totals.kilometersTravelled += result.kilometersTravelled;
       });
       const dataResume = {
         averagePerType: results,
-        summary: { ...totals, average: totals.kilometers === 0 ? 0 : totals.litresConsumed / totals.kilometers }
+        summary: { ...totals, average: totals.kilometersTravelled === 0 ? 0 : totals.litresConsumed / totals.kilometersTravelled }
       };
       return h.response({response: { success: true, data: dataResume }})
     })
@@ -69,11 +69,19 @@ async function handleGetAverageConsumption(request, h) {
   return response;
 }
 
+// 5- Gets vehicles that are near to the service stop ( 500 hs / km ahead)
+async function handleGetServiceProximity(request, h) {
+  const response = await request.server.methods.aggregate(DB_NAME, TYPE_GENERAL, serviceCheckAggregationQuery)
+    .then(results => (h.response({response: { success: true, data: results }})))
+    .catch(err => (h.response({response: { errCode: '001', err: err }})));
+  return response;
+}
 
 module.exports = {
   handleExample,
   handleGetAverageConsumption,
   hangleGetData,
+  handleGetServiceProximity,
   handleInsertData,
   handleInsertVehicle
 };

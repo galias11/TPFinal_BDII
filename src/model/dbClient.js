@@ -6,6 +6,7 @@ const { CONNECTION_NOT_READY } = require('../constants/messages');
 
 // @Helpers
 const {
+  aggregate,
   closeConn,
   connect,
   getData,
@@ -23,6 +24,7 @@ class DBClient {
     this.getData = this.getData.bind(this);
     this.reConnect = this.reConnect.bind(this);
     this.mapReduce = this.mapReduce.bind(this);
+    this.aggregate = this.aggregate.bind(this);
   }
 
   connect(onConnectCallback) {
@@ -56,6 +58,13 @@ class DBClient {
       this.ready = false;
       onCloseConnCallback && onCloseConnCallback();
     }
+  }
+
+  aggregate(dbName, collectionName, aggregationQuery) {
+    if(!this.ready) {
+      return Promise.reject(CONNECTION_NOT_READY);
+    }
+    return aggregate(this.client, dbName, collectionName, aggregationQuery);
   }
 
   getData(dbName, collectionName, query) {

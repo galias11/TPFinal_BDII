@@ -14,7 +14,8 @@
     "joi": "^14.0.6",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
-    "mongodb": "^3.1.10"
+    "mongodb": "^3.1.10",
+    "node-fetch": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^4.19.1",

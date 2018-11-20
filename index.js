@@ -6,6 +6,7 @@ const {
   handleExample,
   handleGetAverageConsumption,
   hangleGetData,
+  handleGetServiceProximity,
   handleInsertData,
   handleInsertVehicle
 } = require('./src/handlers');
@@ -16,7 +17,9 @@ const DBClient = require('./src/model/dbClient');
 // @Routes
 const { 
   GET_AVERAGE_CONSUMPTION, 
-  GET_DATA, ROOT, 
+  GET_DATA, 
+  GET_SERVICE_PROXIMITY,
+  ROOT, 
   REGISTER_DATA,
   REGISTER_VEHICLE 
 } = require('./src/constants/routes');
@@ -50,6 +53,7 @@ async function serverInitialize(dbClient) {
   server.method('getData', dbClient.getData, {});
   server.method('closeConn', dbClient.close, {});
   server.method('mapReduce', dbClient.mapReduce, {});
+  server.method('aggregate', dbClient.aggregate, {});
 
   // Handles connection abort
   server.events.on({ name: 'request' }, (request, event, tags) => {
@@ -102,6 +106,13 @@ async function serverInitialize(dbClient) {
     path: GET_AVERAGE_CONSUMPTION,
     options: { log: { collect: true } },
     handler: (request, response) => {return routeRequest(request, response, handleGetAverageConsumption)}
+  });
+
+  server.route({
+    method: 'GET',
+    path: GET_SERVICE_PROXIMITY,
+    options: { log: { collect: true } },
+    handler: (request, response) => {return routeRequest(request, response, handleGetServiceProximity)}
   });
 
   //After server is set up, we make server start in order to listen the desired port

@@ -21,13 +21,13 @@ const tyresSchema = Joi.object().keys({
 
 const generalSchema = Joi.object().keys({
   id: Joi.string().required(),
-  timeStamp: Joi.number().required(),
-  velocidad: Joi.alternatives([Joi.string(), Joi.number()]).required(),
-  torque: Joi.alternatives([Joi.string(), Joi.number()]).required(),
-  RPM: Joi.alternatives([Joi.string(), Joi.number()]).required(),
-  litrosTanque: Joi.alternatives([Joi.string(), Joi.number()]).required(),
-  kilometraje: Joi.alternatives([Joi.string(), Joi.number()]).required(),
-  horometro: Joi.alternatives([Joi.string(), Joi.number()]).required(),
+  timestamp: Joi.number().required(),
+  velocidad: Joi.number().required(),
+  torque: Joi.number().required(),
+  RPM: Joi.number().required(),
+  litrosTanque: Joi.number().required(),
+  kilometraje: Joi.number().required(),
+  horometro:Joi.number().required(),
 });
 
 const vehicleSchema = Joi.object().keys({

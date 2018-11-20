@@ -43,6 +43,19 @@ const getData = (client, dataBaseName, collectionName, query) => {
   });
 }
 
+const aggregate = (client, dataBaseName, collectionName, aggregationQuery) => {
+  return new Promise((resolve, reject) => {
+    const collection = createCollection(client, dataBaseName, collectionName);
+    collection && collection.aggregate(aggregationQuery).toArray((err, results) => {
+      if(err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
+
 const mapReduce = (client, dataBaseName, collectionName, { mapData, mapReduce, options, aggregationPipeline}) => {
   return new Promise((resolve, reject) => {
     const collection = createCollection(client, dataBaseName, collectionName);
@@ -67,6 +80,7 @@ const closeConn = client => {
 }
 
 module.exports = {
+  aggregate,
   closeConn,
   connect,
   getData,

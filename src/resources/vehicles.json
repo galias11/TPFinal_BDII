@@ -1,0 +1,65 @@
+[
+  {
+    "id": "testCarA",
+    "tipo": "auto",
+    "modelo": 2016,
+    "descripcion": "Ford Focus",
+    "lastService": 37000
+  },
+  {
+    "id": "testCarB",
+    "tipo": "auto",
+    "modelo": 2017,
+    "descripcion": "VW vento",
+    "lastService": 30000
+  },
+  {
+    "id": "testCarC",
+    "tipo": "auto",
+    "modelo": 2018,
+    "descripcion": "Peugeot 208",
+    "lastService": 0
+  },
+  {
+    "id": "testPickupA",
+    "tipo": "camioneta",
+    "modelo": 2017,
+    "descripcion": "Ford ranger",
+    "lastService": 75000
+  },
+  {
+    "id": "testPickupB",
+    "tipo": "camioneta",
+    "modelo": 2018,
+    "descripcion": "Ford ranger Full",
+    "lastService": 25000
+  },
+  {
+    "id": "testPickupC",
+    "tipo": "camioneta",
+    "modelo": 2018,
+    "descripcion": "VW Amarok",
+    "lastService": 32000
+  },
+  {
+    "id": "testTruckA",
+    "tipo": "camion",
+    "modelo": 2018,
+    "descripcion": "Scania",
+    "lastService": 45000
+  },
+  {
+    "id": "testTruckB",
+    "tipo": "camion",
+    "modelo": 2014,
+    "descripcion": "Scania mas viejo",
+    "lastService": 145000
+  },
+  {
+    "id": "testTractorA",
+    "tipo": "tractor",
+    "modelo": 2010,
+    "descripcion": "Alto tractor",
+    "lastService": 206000
+  }
+]
