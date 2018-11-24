@@ -11,11 +11,13 @@ const {
 
 const positionSchema = Joi.object().keys({
   id: Joi.string().required(),
+  timestamp: Joi.number().required(),
   position: Joi.string().required()
 });
 
 const tyresSchema = Joi.object().keys({
   id: Joi.string().required(),
+  timestamp: Joi.number().required(),
   value: Joi.alternatives([Joi.string(), Joi.number()]).required(),
 });
 

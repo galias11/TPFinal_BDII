@@ -1,10 +1,11 @@
 // @Constants
 const { BAD_REQUEST } = require('../constants/messages');
-const { DB_NAME, TYPE_GENERAL, VEHICLES } = require('../constants/constants');
+const { DB_NAME, TYPE_GENERAL, TYPE_POSITION, VEHICLES } = require('../constants/constants');
 
 // @Helpers
 const { getDataType, validateVehicleSchema } = require('../helpers/schemaValitaionHelper');
-const { consumption, serviceCheckAggregationQuery } = require('../helpers/queryHelper');
+const { consumption, serviceCheckAggregationQuery, vehiclePositionQuery } = require('../helpers/queryHelper');
+const { getParsedData } = require('../helpers/parseHelper');
 
 // Root generic handler
 const handleExample = (request, h) => {
@@ -26,12 +27,13 @@ async function handleInsertVehicle(request, h) {
 
 // Save data simple handler
 async function handleInsertData(request, h) {
-  const { payload } = request;
+  let { payload } = request;
   if(!payload) {
-    return h.response({response: { errCode: '400', err: BAD_REQUEST }})
+    return h.response({response: { errCode: '400', err: BAD_REQUEST }});
   }
   const collection = getDataType(payload);
-  const response = await request.server.methods.insertData(DB_NAME, collection, payload)
+  const parsedData = getParsedData(payload, collection);
+  const response = await request.server.methods.insertData(DB_NAME, collection, parsedData)
     .then(() => (h.response({response: { success: true, description: 'Data succesfully saved' }})))
     .catch(err => (h.response({response: { errCode: '001', err: err }})))
   return response;
@@ -47,6 +49,16 @@ async function hangleGetData(request, h) {
   const response = await request.server.methods.getData(DB_NAME, collection, undefined)
     .then(results => (h.response({response: { success: true, data: results }})))
     .catch(err => (h.response({response: { errCode: '001', err: err }})))
+  return response;
+}
+
+// 1- Get vehicle position
+async function handleGetVehiclePosition(request, h) {
+  const { query } = request;
+  const { vehicleId } = query;
+  const response = await request.server.methods.aggregate(DB_NAME, TYPE_POSITION, vehiclePositionQuery(vehicleId))
+    .then(results => (h.response({response: { success: true, data: results }})))
+    .catch(err => (h.response({response: { errCode: '001', err: err}})));
   return response;
 }
 
@@ -82,6 +94,7 @@ module.exports = {
   handleGetAverageConsumption,
   hangleGetData,
   handleGetServiceProximity,
+  handleGetVehiclePosition,
   handleInsertData,
   handleInsertVehicle
 };

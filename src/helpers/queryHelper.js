@@ -6,6 +6,20 @@ Average consumption map reduce
 const { VEHICLE_SERVICE_INTERVAL, WARNING_MIN } = require('../constants/constants');
 
 /************************************************************************
+ * 1- Vehicles last position
+ ************************************************************************/
+
+const vehiclePositionQuery = (vehicleId) => ([
+  { $match: { id: vehicleId }},
+  { $sort: { timestamp: 1 }},
+  { $group: {
+    _id: '$id',
+    position: { $last: '$positionData' },
+    timestamp: { $last: '$timestamp' }
+  }}
+]);
+
+/************************************************************************
  * 2- Vehicles average consumption
  ************************************************************************/
 
@@ -131,5 +145,6 @@ const serviceCheckAggregationQuery = [
 
 module.exports = {
   consumption: consumptionQuery,
-  serviceCheckAggregationQuery
+  serviceCheckAggregationQuery,
+  vehiclePositionQuery
 }

@@ -7,6 +7,7 @@ const {
   handleGetAverageConsumption,
   hangleGetData,
   handleGetServiceProximity,
+  handleGetVehiclePosition,
   handleInsertData,
   handleInsertVehicle
 } = require('./src/handlers');
@@ -19,6 +20,7 @@ const {
   GET_AVERAGE_CONSUMPTION, 
   GET_DATA, 
   GET_SERVICE_PROXIMITY,
+  GET_VEHICLE_POSITION,
   ROOT, 
   REGISTER_DATA,
   REGISTER_VEHICLE 
@@ -113,6 +115,13 @@ async function serverInitialize(dbClient) {
     path: GET_SERVICE_PROXIMITY,
     options: { log: { collect: true } },
     handler: (request, response) => {return routeRequest(request, response, handleGetServiceProximity)}
+  });
+
+  server.route({
+    method: 'GET',
+    path: GET_VEHICLE_POSITION,
+    options: { log: { collect: true } },
+    handler: (request, response) => {return routeRequest(request, response, handleGetVehiclePosition)}
   });
 
   //After server is set up, we make server start in order to listen the desired port
