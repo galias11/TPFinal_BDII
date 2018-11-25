@@ -7,6 +7,7 @@ const {
   handleGetAverageConsumption,
   hangleGetData,
   handleGetServiceProximity,
+  handleGetTimeInMdP,
   handleGetVehiclePosition,
   handleInsertData,
   handleInsertVehicle
@@ -19,6 +20,7 @@ const DBClient = require('./src/model/dbClient');
 const { 
   GET_AVERAGE_CONSUMPTION, 
   GET_DATA, 
+  GET_MDP_TIME,
   GET_SERVICE_PROXIMITY,
   GET_VEHICLE_POSITION,
   ROOT, 
@@ -122,6 +124,13 @@ async function serverInitialize(dbClient) {
     path: GET_VEHICLE_POSITION,
     options: { log: { collect: true } },
     handler: (request, response) => {return routeRequest(request, response, handleGetVehiclePosition)}
+  });
+
+  server.route({
+    method: 'GET',
+    path: GET_MDP_TIME,
+    options: { log: { collect: true } },
+    handler: (request, response) => {return routeRequest(request, response, handleGetTimeInMdP)}
   });
 
   //After server is set up, we make server start in order to listen the desired port

@@ -4,8 +4,15 @@ const { DB_NAME, TYPE_GENERAL, TYPE_POSITION, VEHICLES } = require('../constants
 
 // @Helpers
 const { getDataType, validateVehicleSchema } = require('../helpers/schemaValitaionHelper');
-const { consumption, serviceCheckAggregationQuery, vehiclePositionQuery } = require('../helpers/queryHelper');
 const { getParsedData } = require('../helpers/parseHelper');
+const { getMdpTime } = require('../helpers/dataProcessHelper');
+const { 
+  consumption, 
+  mdpLocQuery, 
+  noMdpLocQuery, 
+  serviceCheckAggregationQuery, 
+  vehiclePositionQuery 
+} = require('../helpers/queryHelper');
 
 // Root generic handler
 const handleExample = (request, h) => {
@@ -81,6 +88,20 @@ async function handleGetAverageConsumption(request, h) {
   return response;
 }
 
+// 3- Get vehicle time in MdP
+async function handleGetTimeInMdP(request, h) {
+  const response = Promise.all([
+    await request.server.methods.getData(DB_NAME, TYPE_POSITION, mdpLocQuery),
+    await request.server.methods.getData(DB_NAME, TYPE_POSITION, noMdpLocQuery)
+  ])
+    .then(results => {
+      const summary = getMdpTime(results[0], results[1]);
+      return h.response({response: {success: true, summary}});
+    })
+    .catch(err => (h.response({response: { errCode: '001', err: err}})));
+  return response;
+}
+
 // 5- Gets vehicles that are near to the service stop ( 500 hs / km ahead)
 async function handleGetServiceProximity(request, h) {
   const response = await request.server.methods.aggregate(DB_NAME, TYPE_GENERAL, serviceCheckAggregationQuery)
@@ -94,6 +115,7 @@ module.exports = {
   handleGetAverageConsumption,
   hangleGetData,
   handleGetServiceProximity,
+  handleGetTimeInMdP,
   handleGetVehiclePosition,
   handleInsertData,
   handleInsertVehicle

@@ -75,7 +75,7 @@ vehicles.forEach(vehicle => {
     const tyresData = tyres[tyresIndex];
     let kilometraje = kilometers;
     let horometro = time;
-    timestamp = timestamp + (36000 + Math.random() * 18000 * (Math.random() > 0.5 ? 1 : -1));
+    timestamp = timestamp + (3600000 + Math.random() * 1800000 * (Math.random() > 0.5 ? 1 : -1));
     litrosTanque = (litrosTanque - consumo) > minLitros ? litrosTanque - consumo : maxLitros;
     positionIndex = positionIndex === positionQuantity - 1 ? 0 : positionIndex + 1;
     if(!tyresCounter) {

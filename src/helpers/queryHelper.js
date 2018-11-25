@@ -3,7 +3,7 @@ Average consumption map reduce
 */
 
 // @Constants
-const { VEHICLE_SERVICE_INTERVAL, WARNING_MIN } = require('../constants/constants');
+const { MDP_LOC, MDP_RADIUS, VEHICLE_SERVICE_INTERVAL, WARNING_MIN } = require('../constants/constants');
 
 /************************************************************************
  * 1- Vehicles last position
@@ -104,6 +104,34 @@ const consumptionQuery = {
 };
 
 /************************************************************************
+ * 3- Vehicles time in MdP
+ ************************************************************************/
+
+const mdpLocQuery = {
+  'positionData.loc.geojson.coordinates': { 
+    $near: {
+      $geometry: {
+        type: 'Point',
+        coordinates: MDP_LOC
+      },
+      $maxDistance: MDP_RADIUS
+    }
+  }
+};
+
+const noMdpLocQuery = {
+  'positionData.loc.geojson.coordinates': { 
+    $near: {
+      $geometry: {
+        type: 'Point',
+        coordinates: MDP_LOC
+      },
+      $minDistance: MDP_RADIUS + 1
+    }
+  }
+};
+
+/************************************************************************
  * 5- Vehicles service check
  ************************************************************************/
 
@@ -145,6 +173,8 @@ const serviceCheckAggregationQuery = [
 
 module.exports = {
   consumption: consumptionQuery,
+  mdpLocQuery,
+  noMdpLocQuery,
   serviceCheckAggregationQuery,
   vehiclePositionQuery
 }
