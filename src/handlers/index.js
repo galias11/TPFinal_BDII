@@ -1,13 +1,14 @@
 // @Constants
 const { BAD_REQUEST } = require('../constants/messages');
-const { DB_NAME, TYPE_GENERAL, TYPE_POSITION, VEHICLES } = require('../constants/constants');
+const { DB_NAME, PRESSURE_MIN_VALUE, TYPE_GENERAL, TYPE_POSITION, VEHICLES } = require('../constants/constants');
 
 // @Helpers
 const { getDataType, validateVehicleSchema } = require('../helpers/schemaValitaionHelper');
 const { getParsedData } = require('../helpers/parseHelper');
-const { getMdpTime } = require('../helpers/dataProcessHelper');
+const { getAverageConsumptionUnderCondition, getMdpTime } = require('../helpers/dataProcessHelper');
 const { 
   consumption, 
+  consumptionTiresAggregate,
   mdpLocQuery, 
   noMdpLocQuery, 
   serviceCheckAggregationQuery, 
@@ -102,6 +103,14 @@ async function handleGetTimeInMdP(request, h) {
   return response;
 }
 
+// 4- Get consumption when tyres are below 28
+async function handleGetAverageConsumptionBelow28(request, h) {
+  const response = await request.server.methods.aggregate(DB_NAME, VEHICLES, consumptionTiresAggregate)
+    .then(results => (h.response({response: { success: true, data: getAverageConsumptionUnderCondition(results, PRESSURE_MIN_VALUE) }})))
+    .catch(err => (h.response({response: { errCode: '001', err: err }})))
+  return response;
+}
+
 // 5- Gets vehicles that are near to the service stop ( 500 hs / km ahead)
 async function handleGetServiceProximity(request, h) {
   const response = await request.server.methods.aggregate(DB_NAME, TYPE_GENERAL, serviceCheckAggregationQuery)
@@ -113,6 +122,7 @@ async function handleGetServiceProximity(request, h) {
 module.exports = {
   handleExample,
   handleGetAverageConsumption,
+  handleGetAverageConsumptionBelow28,
   hangleGetData,
   handleGetServiceProximity,
   handleGetTimeInMdP,

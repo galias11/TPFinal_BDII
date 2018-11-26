@@ -5,6 +5,7 @@ const Hapi = require('hapi'); //@npm MIT license
 const { 
   handleExample,
   handleGetAverageConsumption,
+  handleGetAverageConsumptionBelow28,
   hangleGetData,
   handleGetServiceProximity,
   handleGetTimeInMdP,
@@ -18,7 +19,8 @@ const DBClient = require('./src/model/dbClient');
 
 // @Routes
 const { 
-  GET_AVERAGE_CONSUMPTION, 
+  GET_AVERAGE_CONSUMPTION,
+  GET_AVERAGE_CONSUMPTION_BELOW_28, 
   GET_DATA, 
   GET_MDP_TIME,
   GET_SERVICE_PROXIMITY,
@@ -131,6 +133,13 @@ async function serverInitialize(dbClient) {
     path: GET_MDP_TIME,
     options: { log: { collect: true } },
     handler: (request, response) => {return routeRequest(request, response, handleGetTimeInMdP)}
+  });
+
+  server.route({
+    method: 'GET',
+    path: GET_AVERAGE_CONSUMPTION_BELOW_28,
+    options: { log: { collect: true } },
+    handler: (request, response) => {return routeRequest(request, response, handleGetAverageConsumptionBelow28)}
   });
 
   //After server is set up, we make server start in order to listen the desired port

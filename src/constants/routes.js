@@ -3,6 +3,7 @@ module.exports = {
   REGISTER_DATA: '/register',
   REGISTER_VEHICLE: '/register_vehicle',
   GET_AVERAGE_CONSUMPTION: '/average_cons',
+  GET_AVERAGE_CONSUMPTION_BELOW_28: '/average_cons_special',
   GET_MDP_TIME: '/mdp_position',
   GET_VEHICLE_POSITION: '/vehicle_position',
   GET_DATA: '/get',

@@ -132,6 +132,49 @@ const noMdpLocQuery = {
 };
 
 /************************************************************************
+ * 4- Vehicles consumption when tyres below 28lbs
+ ************************************************************************/
+
+const consumptionTiresAggregate = [
+  { $lookup: {
+    from: 'type_tyres',
+    localField: 'id',
+    foreignField: 'id',
+    as: 'tiresData'
+  }},
+  { $unwind: '$tiresData' },
+  { $group: {
+    _id: '$id',
+    tiresData: {
+      $push: { 
+        mac: '$tiresData.sensorData.mac',
+        pressure: '$tiresData.sensorData.pressure',
+        timestamp: '$tiresData.timestamp'
+      }
+    }
+  }},
+  { $lookup: {
+    from: 'type_general',
+    localField: '_id',
+    foreignField: 'id',
+    as: 'generalData'
+  }},
+  { $unwind: '$generalData' },
+  { $group: {
+    _id: '$_id',
+    tiresData: { $first: '$tiresData' },
+    generalData: {
+      $addToSet: { 
+        kilometraje: '$generalData.kilometraje',
+        litrosTanque: '$generalData.litrosTanque',
+        timestamp: '$generalData.timestamp'
+      }
+    }
+  }},
+  { $addFields: { tiresData: '$tiresData' }}
+];
+
+/************************************************************************
  * 5- Vehicles service check
  ************************************************************************/
 
@@ -173,6 +216,7 @@ const serviceCheckAggregationQuery = [
 
 module.exports = {
   consumption: consumptionQuery,
+  consumptionTiresAggregate,
   mdpLocQuery,
   noMdpLocQuery,
   serviceCheckAggregationQuery,
